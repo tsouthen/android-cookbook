@@ -4,9 +4,9 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-<TextView  
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    android:text="ohhai, we just unpacked the number database if it didnt already exist, and also started the revealcaller service"
+<TextView
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:text="RevealCaller runs in the background for you, giving you location info on any phone calls you receive."
     />
 </LinearLayout>

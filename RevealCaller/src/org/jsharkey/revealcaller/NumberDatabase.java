@@ -1,53 +1,51 @@
 package org.jsharkey.revealcaller;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
-import android.net.Uri;
 import android.util.Log;
 
 public class NumberDatabase {
-	
+
 	public final static String TAG = NumberDatabase.class.toString();
-	
+
 	public final static int ENTRYLEN = 11;
 
 	protected final Context context;
 	protected Map<String,String> states = new HashMap<String,String>();
-	
-	
+
+
 	public NumberDatabase(Context context) {
 		this.context = context;
 		this.fillStates();
 
 	}
-	
+
 	public String searchNumber(String number) {
-		
+
 		// try searching for nice string for incoming call number
 		number = number.replaceAll("[^0-9]", "");
+		if (number.length() == 11) {
+			//eg 1 555 555 5555, we want to get rid of the 1
+			number = number.substring(0,number.length());
+		}
+		if (number.length() != 10) {
+			Log.w(TAG, "the incoming number is not valid");
+			return null;
+		}
+
+
 		int prefix = Integer.parseInt(number.substring(0, 3)),
 			exchange = Integer.parseInt(number.substring(3, 6));
-		
+
 		String niceState = this.tryState(prefix);
 		String niceDetailed = this.tryDetailed(prefix, exchange);
-		
+
 		return (niceDetailed != null) ? niceDetailed : niceState;
-		
+
 	}
 
 	protected String tryState(int prefix) {
@@ -55,28 +53,28 @@ public class NumberDatabase {
 		// try finding this prefix in our rough state-level database
 		String sprefix = Integer.toString(prefix);
 		if(!this.states.containsKey(sprefix)) return null;
-		
+
 		return String.format("Call from %s", this.states.get(sprefix));
-		
+
 	}
-	
+
 	protected String tryDetailed(int prefix, int exchange) {
-		
+
 		// decide which raw file to open
 		int prefix1 = prefix - (prefix % 100);
 		InputStream is = this.openStream(prefix1);
 		if(is == null) return null;
-		
+
 		// try scanning into file correct amount
 		int first = (prefix % 100) * 900;
 		int second = exchange - 100;
-		
+
 		int scanin = (first + second) * ENTRYLEN;
-		
+
 		Log.d(TAG, String.format("first=%d, second=%d, total=%d, scanin=%d", first, second, first+second,scanin));
-		
+
 		String raw = null;
-		
+
 		try {
 			byte[] entry = new byte[ENTRYLEN];
 			is.skip(scanin);
@@ -85,19 +83,19 @@ public class NumberDatabase {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		if(raw == null) return null;
 		if(raw.length() < 4) return null;
-		
+
 		// format LSTCity
 		String type = raw.substring(0, 1);
 		String state = raw.substring(1, 3);
 		String city = raw.substring(3);
-		
+
 		return String.format("%s from %s, %s", (type == "W") ? "Cellular" : "Landline", city, state);
 
 	}
-	
+
 	protected InputStream openStream(int prefix1) {
 		Log.d(TAG, String.format("prefix1=%d", prefix1));
 		switch(prefix1) {
@@ -420,8 +418,7 @@ public class NumberDatabase {
 		states.put("984", "North Carolina");
 		states.put("985", "Louisiana");
 		states.put("989", "Michigan");
-		
-	}
 
+	}
 
 }
