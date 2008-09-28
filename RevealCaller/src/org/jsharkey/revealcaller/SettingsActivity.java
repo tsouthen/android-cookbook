@@ -21,9 +21,6 @@ public class SettingsActivity extends Activity {
 		// http://www.google.com/search?hl=en&pb=r&q=2188795293
 		// disclaimer: i have no clue who this random person is rofl
 
-		// TODO: we should listen for broadcast intent on-boot to start service instead of depending on user
-		// startign this app manually at some point during each session
-
 		// TODO: CITE DATA SOURCES
 		// http://www.wcisd.hpc.mil/~phil/npanxx/
 		// http://www.bennetyee.org/ucsd-pages/area.html
