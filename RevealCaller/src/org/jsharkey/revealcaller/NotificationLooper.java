@@ -28,7 +28,7 @@ public class NotificationLooper extends Thread {
 					new Intent(context, SettingsActivity.class),
 					PendingIntent.FLAG_CANCEL_CURRENT);
 
-			notif = new Notification(R.drawable.icon, "rawr", System
+			notif = new Notification(android.R.drawable.stat_sys_phone_call, "rawr", System
 					.currentTimeMillis());
 			notif.tickerText = callInfo;
 			notif.flags = Notification.FLAG_AUTO_CANCEL;
