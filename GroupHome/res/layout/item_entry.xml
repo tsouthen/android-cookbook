@@ -1,0 +1,19 @@
+<TextView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="79dip"
+	android:layout_height="88dip"
+	
+	android:paddingTop="6dip"
+	android:paddingBottom="3dip"
+	android:drawablePadding="0dip"
+	
+	android:textSize="13dip"
+	android:textColor="@color/grid_text"
+	android:maxLines="2"
+	android:ellipsize="end"
+	android:gravity="top|center_horizontal"
+
+	android:focusable="true"
+	android:clickable="true"	
+	android:background="@drawable/grid_selector"
+	/>
