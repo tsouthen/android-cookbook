@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,6 +34,8 @@ import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.GridView;
 import android.widget.ListAdapter;
 import android.widget.TableLayout;
@@ -90,6 +93,9 @@ public class LauncherActivity extends ExpandableListActivity {
 		//   default expand/collapse behavior
 		// remember open/closed status when coming back later
 		
+		// settings:  -- always open, always closed, remember last
+		// menus:     -- normal home, open all/close all, settings, search
+		
 		JSONObject groupMap = new JSONObject();
 		try {
 			groupMap = new JSONObject(JSON_GROUP);
@@ -123,16 +129,15 @@ public class LauncherActivity extends ExpandableListActivity {
 			String packageName = info.activityInfo.packageName;
 			String groupName = resolveGroup(groupMap, packageName);
 			
+			CharSequence desc = info.activityInfo.applicationInfo.loadDescription(pm);
+			
 			Log.d(TAG, String.format("found groupName=%s for packageName=%s", groupName, packageName));
+			Log.d(TAG, String.format("has desc=%s", desc));
 			
 			// ensure that we have a list for this category
 			if(!entryMap.containsKey(groupName))
 				entryMap.put(groupName, new LinkedList<EntryInfo>());
 			
-			entryMap.get(groupName).add(entry);
-			entryMap.get(groupName).add(entry);
-			entryMap.get(groupName).add(entry);
-			entryMap.get(groupName).add(entry);
 			entryMap.get(groupName).add(entry);
 			entryMap.get(groupName).add(entry);
 			entryMap.get(groupName).add(entry);
@@ -147,28 +152,58 @@ public class LauncherActivity extends ExpandableListActivity {
 		}
 		
 		
-		// now that tree is built, pass along to adapter
-		this.setListAdapter(new GroupAdapter(entryMap));
+		// now that app tree is built, pass along to adapter
+		adapter = new GroupAdapter(entryMap);
+		
+		this.updateColumns(this.getResources().getConfiguration());
+		this.setListAdapter(adapter);
+		
+		// allow focus inside of rows to select children
 		this.getExpandableListView().setItemsCanFocus(true);
 
 		
 	}
 	
-	// helps map from category to gridview of apps
-	// need to map from categories into applicationinfo
-	// somehow need to pass along app name/category pairings
-	// json from online with   "Finance": [""]
+	private GroupAdapter adapter = null;
+	
+	/**
+	 * Force columns shown in adapter based on orientation.
+	 */
+	private void updateColumns(Configuration config) {
+		adapter.setColumns((config.orientation == Configuration.ORIENTATION_PORTRAIT) ? 4 : 6);
+	}
+	
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		this.updateColumns(newConfig);
+	}
+	
+	/**
+	 * Special adapter to help provide application lists using expandable
+	 * categories. Specifically, it folds child items into grid-like columns
+	 * based on setColumns(), which is a hack. While it correctly recycles rows
+	 * when possible, this could be written much better.
+	 */
 	public class GroupAdapter extends BaseExpandableListAdapter {
 
 		private Map<String,List<EntryInfo>> entryMap;
 		private String[] groupNames;
 		
-		public static final int COLS = 4;
+		private int columns = -1;
 		
 		public GroupAdapter(Map<String,List<EntryInfo>> entryMap) {
 			this.entryMap = entryMap;
 			this.groupNames = entryMap.keySet().toArray(new String[] {});
 			Arrays.sort(this.groupNames);
+		}
+
+		/**
+		 * Force the number of columns to use when wrapping child elements.
+		 * Inflated children should have static widths.
+		 */
+		public void setColumns(int columns) {
+			this.columns = columns;
+			this.notifyDataSetInvalidated();
 		}
 		
 		public Object getGroup(int groupPosition) {
@@ -194,7 +229,8 @@ public class LauncherActivity extends ExpandableListActivity {
 		}
 
 		public Object getChild(int groupPosition, int childPosition) {
-			return null; //entryMap.get(groupNames[groupPosition]).get(childPosition);
+			// no good value when a row is actually multiple children
+			return null;
 		}
 
 		public long getChildId(int groupPosition, int childPosition) {
@@ -202,9 +238,9 @@ public class LauncherActivity extends ExpandableListActivity {
 		}
 
 		public int getChildrenCount(int groupPosition) {
-			// round our reported row count to match number of columns
+			// wrap children items into rows using column count
 			int actualCount = entryMap.get(groupNames[groupPosition]).size();
-			return (actualCount + (COLS - 1)) / COLS;
+			return (actualCount + (columns - 1)) / columns;
 		}
 
 		public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
@@ -213,13 +249,15 @@ public class LauncherActivity extends ExpandableListActivity {
 				convertView = inflater.inflate(R.layout.item_row, parent, false);
 
 			final ViewGroup viewGroup = (ViewGroup)convertView;
+			
+			// TODO: try recycling any existing children instead of rebuilding
 			viewGroup.removeAllViews();
 			
 			List<EntryInfo> actualChildren = entryMap.get(groupNames[groupPosition]);
-			int start = childPosition * COLS, end = (childPosition + 1) * COLS;
+			int start = childPosition * columns, end = (childPosition + 1) * columns;
 			
 			for(int i = start; i < end; i++) {
-				final EntryInfo info = actualChildren.get(childPosition);
+				final EntryInfo info = actualChildren.get(i);
 				
 				// inflate child elements if they dont already exist
 				if(end > actualChildren.size()) end = actualChildren.size();

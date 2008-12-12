@@ -14,10 +14,14 @@ public final class R {
         public static final int grid_text=0x7f050000;
     }
     public static final class drawable {
-        public static final int focused_application_background=0x7f020000;
-        public static final int grid_selector=0x7f020001;
-        public static final int icon=0x7f020002;
-        public static final int pressed_application_background=0x7f020003;
+        public static final int black_bar=0x7f020000;
+        public static final int focused_application_background=0x7f020001;
+        public static final int grid_selector=0x7f020002;
+        public static final int icon=0x7f020003;
+        public static final int pressed_application_background=0x7f020004;
+        public static final int settings_header=0x7f020005;
+        public static final int settings_header_list=0x7f020006;
+        public static final int settings_header_raw=0x7f020007;
     }
     public static final class layout {
         public static final int act_launch=0x7f030000;

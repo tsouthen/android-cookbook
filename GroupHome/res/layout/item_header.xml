@@ -26,7 +26,9 @@
 	android:paddingLeft="40dip"
 	android:paddingRight="15dip"
 	android:paddingBottom="10dip"
-	android:textAppearance="?android:attr/textAppearanceMedium"  
+	android:textAppearance="?android:attr/textAppearanceMedium"
+	android:textColor="#f000"  
+	android:background="@drawable/settings_header_list"
 	/>
 
 	<!--
