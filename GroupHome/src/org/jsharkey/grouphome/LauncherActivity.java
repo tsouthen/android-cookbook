@@ -146,52 +146,6 @@ public class LauncherActivity extends ExpandableListActivity {
 			
 		}
 		
-		// create expander for each group
-//		ViewGroup list = (ViewGroup)this.findViewById(android.R.id.list);
-//		
-//		String[] groupList = entryMap.keySet().toArray(new String[] { });
-//		Arrays.sort(groupList);
-//		
-//		for(String groupName : groupList) {
-//			View expand = inflater.inflate(R.layout.item_expand, list, false);
-//			
-//			TextView title = (TextView)expand.findViewById(android.R.id.title);
-//			title.setText(groupName);
-//			
-//			//ListAdapter adapter = new EntryAdapter(LauncherActivity.this, entryMap.get(groupName));
-//			//((GridView)expand.findViewById(android.R.id.content)).setAdapter(adapter);
-//			
-//			// insert all children elements as rows
-//			TableLayout content = (TableLayout)expand.findViewById(android.R.id.content);
-//			TableRow currentRow = new TableRow(this);
-//			currentRow.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
-//			
-//			for(EntryInfo entry : entryMap.get(groupName)) {
-//				TextView textView = (TextView)inflater.inflate(R.layout.item_entry, currentRow, false);
-//
-//				textView.setCompoundDrawablesWithIntrinsicBounds(null, entry.icon, null, null);
-//				textView.setText(entry.title);
-//
-//				currentRow.addView(textView);
-//
-//				// create new rows when needed
-//				if(currentRow.getChildCount() == 4) {
-//					content.addView(currentRow);
-//					currentRow = new TableRow(this);
-//					
-//				}
-//				
-//			}
-//			
-//			if(currentRow.getChildCount() > 0)
-//				content.addView(currentRow);
-//			
-//			
-//			list.addView(expand);
-//			
-//			
-//		}
-//		
 		
 		// now that tree is built, pass along to adapter
 		this.setListAdapter(new GroupAdapter(entryMap));
