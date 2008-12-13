@@ -16,11 +16,43 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<ExpandableListView
+<FrameLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@android:id/list"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
-	android:divider="@drawable/black_bar"
-	android:childDivider="@drawable/black_bar"
-	/>
+	>
+	
+	<ExpandableListView
+		android:id="@android:id/list"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:divider="@drawable/black_bar"
+		android:childDivider="@drawable/black_bar"
+		/>
+		
+	<LinearLayout
+		android:id="@android:id/empty"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:orientation="horizontal"
+		android:gravity="center"
+		>
+		
+		<ProgressBar
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:paddingRight="10dip"
+			style="?android:attr/progressBarStyleSmall"
+			/>
+		
+		<TextView
+			android:id="@android:id/text1"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:text="Loading and categorizing\nyour applications"
+			/>
+			
+	</LinearLayout>
+
+</FrameLayout>
