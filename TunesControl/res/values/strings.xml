@@ -87,7 +87,7 @@
 	<string name="item_network_caption">Open iTunes and make sure you\'re on the same Wifi network.  If having trouble, try cycling your Wifi, opening port 3689 in your firewall, or tapping Menu and Refresh.</string>
 
 
-	<string name="toast_volume_title">Remote volume</string>
+	<string name="toast_volume_title">iTunes volume</string>
 
 	<string name="pref_background">background</string>
 	<string name="pref_fade">fade</string>
